@@ -29,7 +29,6 @@ class LoginTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'message',
                 'access_token',
                 'token_type',
                 'user' => ['id', 'name', 'email', 'created_at', 'updated_at'],
@@ -49,10 +48,9 @@ class LoginTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-            ->assertJson([
-                'message' => 'Invalid credentials',
-            ]);
+            ->assertJson(['message' => 'Unauthorized']);
     }
+
 
     public function test_user_cannot_login_with_missing_fields()
     {
@@ -74,7 +72,8 @@ class LoginTest extends TestCase
             'Authorization' => 'Bearer ' . $token,
         ])->postJson('/api/logout');
 
-        $response->assertStatus(200)
-            ->assertJson(['message' => 'Logged out']);
+        $response->assertStatus(204)
+            ->assertNoContent();
     }
+
 }

@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\AddToCartRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\CartItem;
+use LogicException;
 class CartController extends Controller
 {
-    public function addToCart(Request $request)
+    public function addToCart(AddToCartRequest $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         $user = Auth::user();
         $product = Product::findOrFail($request->product_id);
         $quantity = $request->quantity;
@@ -34,11 +30,11 @@ class CartController extends Controller
         }
 
         if ($product->type === 'pizza' && $pizzaCount + $quantity > 10) {
-            return response()->json(['error' => 'Можно добавить не более 10 пицц.'], 400);
+            throw new LogicException('Можно добавить не более 10 пицц.');
         }
 
         if ($product->type === 'drink' && $drinkCount + $quantity > 20) {
-            return response()->json(['error' => 'Можно добавить не более 20 напитков.'], 400);
+            throw new LogicException('Можно добавить не более 20 напитков.');
         }
 
         $cartItem = CartItem::firstOrNew([
@@ -49,6 +45,7 @@ class CartController extends Controller
         $cartItem->quantity += $quantity;
         $cartItem->save();
 
-        return response()->json(['message' => 'Товар добавлен в корзину.']);
+        return response()->noContent(Response::HTTP_OK);
+
     }
 }

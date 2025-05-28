@@ -3,41 +3,33 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required','email'],
-            'password' => ['required'],
-        ]);
-
-        if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Invalid credentials'
-            ], 401);
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
         $user = $request->user();
-
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login successful',
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Logged out'
-        ]);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
 }

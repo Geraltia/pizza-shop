@@ -1,34 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreProductRequest;
+
 class ProductController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-        ]);
+        $product = Product::create($request->only('name', 'description', 'price'));
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-        ]);
-
-        return response()->json([
-            'message' => 'Product created successfully',
-            'product' => $product,
-        ], 201);
+        return response()->json(['product' => $product], Response::HTTP_CREATED);
     }
 }

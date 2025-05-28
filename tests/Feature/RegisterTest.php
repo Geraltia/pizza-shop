@@ -25,7 +25,6 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonStructure([
-            'message',
             'user' => [
                 'id',
                 'name',
@@ -39,6 +38,7 @@ class RegisterTest extends TestCase
             'email' => 'test@example.com',
         ]);
     }
+
 
     /** @test */
     public function registration_fails_with_missing_fields()

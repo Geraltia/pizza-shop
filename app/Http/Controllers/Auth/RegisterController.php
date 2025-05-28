@@ -3,31 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\RegisterRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'Пользователь зарегистрирован', 'user' => $user], 201);
+        return response()->json(['user' => $user,], Response::HTTP_CREATED);
     }
+
 }
