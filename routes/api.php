@@ -15,9 +15,12 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [LoginController::class, 'logout']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/products', [ProductController::class, 'store']);
-Route::middleware('auth:sanctum')->post('/cart/add', [CartController::class, 'addToCart']);
-Route::middleware('auth:sanctum')->post('/orders', [OrderController::class, 'store']);
-Route::middleware('auth:sanctum')->get('/orders', [OrderController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/cart/add', [CartController::class, 'addToCart']);
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index']);
+});
+
 
 
 

@@ -12,7 +12,7 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['message' => 'Ошибка авторизации'], Response::HTTP_UNAUTHORIZED);
         }
 
         $user = $request->user();

@@ -48,7 +48,7 @@ class LoginTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-            ->assertJson(['message' => 'Unauthorized']);
+            ->assertJson(['message' => 'Ошибка авторизации']);
     }
 
 
