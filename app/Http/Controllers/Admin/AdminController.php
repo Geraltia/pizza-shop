@@ -16,8 +16,9 @@ class AdminController extends Controller
     {
         $perPage = $request->get('per_page', 10);
         $products = Product::paginate($perPage);
-        return response()->json($products);
+        return response()->json($products, Response::HTTP_OK);
     }
+
 
     public function addProduct(StoreProductRequest $request)
     {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
@@ -22,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [OrderController::class, 'index']);
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum',AdminMiddleware::class])->prefix('admin')->group(function () {
     Route::get('products', [AdminController::class, 'products']);
     Route::post('products', [AdminController::class, 'addProduct']);
     Route::put('products/{id}', [AdminController::class, 'updateProduct']);
