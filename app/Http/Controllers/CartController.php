@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\AddToCartRequest;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Product;
 use App\Models\CartItem;
-use LogicException;
-class CartController extends Controller
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
+
+final class CartController extends Controller
 {
     public function addToCart(AddToCartRequest $request)
     {
@@ -30,11 +32,11 @@ class CartController extends Controller
         }
 
         if ($product->type === 'pizza' && $pizzaCount + $quantity > 10) {
-            throw new LogicException('Можно добавить не более 10 пицц.');
+            throw new \LogicException('Можно добавить не более 10 пицц.');
         }
 
         if ($product->type === 'drink' && $drinkCount + $quantity > 20) {
-            throw new LogicException('Можно добавить не более 20 напитков.');
+            throw new \LogicException('Можно добавить не более 20 напитков.');
         }
 
         $cartItem = CartItem::firstOrNew([

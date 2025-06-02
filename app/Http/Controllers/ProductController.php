@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\Product;
-use App\Http\Requests\StoreProductRequest;
+declare(strict_types=1);
 
-class ProductController extends Controller
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreProductRequest;
+use App\Models\Product;
+use Symfony\Component\HttpFoundation\Response;
+
+final class ProductController extends Controller
 {
     public function store(StoreProductRequest $request)
     {

@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-class LoginController extends Controller
+use Symfony\Component\HttpFoundation\Response;
+
+final class LoginController extends Controller
 {
     public function login(LoginRequest $request)
     {
@@ -31,5 +34,4 @@ class LoginController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
-
 }

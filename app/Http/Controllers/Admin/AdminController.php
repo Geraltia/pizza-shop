@@ -1,24 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Order;
 use App\Http\Requests\StoreProductRequest;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\UpdateProductRequest;
+use App\Jobs\GenerateSalesReportJob;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Report;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
-class AdminController extends Controller
+final class AdminController extends Controller
 {
     public function products(Request $request)
     {
         $perPage = $request->get('per_page', 10);
         $products = Product::paginate($perPage);
+
         return response()->json($products, Response::HTTP_OK);
     }
-
 
     public function addProduct(StoreProductRequest $request)
     {
@@ -52,13 +57,32 @@ class AdminController extends Controller
     {
         $perPage = request()->get('per_page', 10);
         $orders = Order::with('orderItems.product')->paginate($perPage);
+
         return response()->json($orders);
     }
 
     public function orderDetails($id)
     {
         $order = Order::with('orderItems.product')->findOrFail($id);
+
         return response()->json($order);
     }
 
+    public function generateReport()
+    {
+        $uuid = Str::uuid();
+
+        $report = Report::create([
+            'uuid' => $uuid,
+            'status' => 'pending',
+        ]);
+
+        GenerateSalesReportJob::dispatch($report);
+
+        return response()->json([
+            'uuid' => $uuid,
+            'message' => 'Отчёт поставлен в очередь',
+            'status' => 'pending',
+        ], Response::HTTP_ACCEPTED);
+    }
 }

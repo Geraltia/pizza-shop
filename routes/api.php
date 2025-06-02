@@ -31,6 +31,7 @@ Route::middleware(['auth:sanctum',AdminMiddleware::class])->prefix('admin')->gro
 
     Route::get('orders', [AdminController::class, 'orders']);
     Route::get('orders/{id}', [AdminController::class, 'orderDetails']);
+    Route::get('generate-report', [AdminController::class, 'generateReport']);
 });
 
 

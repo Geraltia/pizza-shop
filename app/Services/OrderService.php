@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\CartItem;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Response;
 
-class OrderService
+final class OrderService
 {
     public function createOrder(array $data): array
     {
@@ -24,7 +26,7 @@ class OrderService
             ];
         }
 
-        return DB::transaction(function () use ($user, $data, $cartItems) {
+        return DB::transaction(static function () use ($user, $data, $cartItems) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'phone' => $data['phone'],
@@ -47,8 +49,8 @@ class OrderService
                 'status' => Response::HTTP_CREATED,
                 'data' => [
                     'message' => 'Заказ успешно оформлен',
-                    'order_id' => $order->id
-                ]
+                    'order_id' => $order->id,
+                ],
             ];
         });
     }

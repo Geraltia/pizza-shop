@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
-class RegisterController extends Controller
+final class RegisterController extends Controller
 {
     public function register(RegisterRequest $request)
     {
@@ -18,7 +20,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['user' => $user,], Response::HTTP_CREATED);
+        return response()->json(['user' => $user], Response::HTTP_CREATED);
     }
-
 }

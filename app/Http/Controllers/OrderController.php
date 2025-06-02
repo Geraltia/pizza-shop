@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrderRequest;
+use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Http\Requests\StoreOrderRequest;
 use Symfony\Component\HttpFoundation\Response;
 
-
-class OrderController extends Controller
+final class OrderController extends Controller
 {
     protected $orderService;
 
@@ -41,10 +42,7 @@ class OrderController extends Controller
                 'per_page' => $orders->perPage(),
                 'current_page' => $orders->currentPage(),
                 'last_page' => $orders->lastPage(),
-            ]
+            ],
         ], Response::HTTP_OK);
     }
-
-
-
 }
