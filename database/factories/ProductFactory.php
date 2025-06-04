@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\ProductType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class ProductFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
-            'type' => 'pizza', // или 'drink' в тесте можно переопределять
+            'type' => ProductType::Pizza,
             'price' => $this->faker->randomFloat(2, 5, 20),
         ];
     }

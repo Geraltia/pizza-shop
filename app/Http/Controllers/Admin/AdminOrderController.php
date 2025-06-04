@@ -3,54 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Symfony\Component\HttpFoundation\Response;
+use App\Models\Order;
 
 class AdminOrderController extends Controller
 {
-    public function products(Request $request)
+    public function orders()
     {
-        $perPage = $request->get('per_page', 10);
-        $page = $request->get('page', 1);
+        $perPage = request()->get('per_page', 10);
+        $orders = Order::with('orderItems.product')->paginate($perPage);
 
-        $cacheKey = "products_page_{$page}_perpage_{$perPage}";
-
-        $products = Cache::remember($cacheKey, 60 * 5, function () use ($perPage) {
-            return Product::paginate($perPage);
-        });
-
-        return response()->json($products, Response::HTTP_OK);
+        return response()->json($orders);
     }
 
-    public function addProduct(StoreProductRequest $request)
+    public function orderDetails($id)
     {
-        $product = Product::create($request->validated());
+        $order = Order::with('orderItems.product')->findOrFail($id);
 
-        return response()->json([
-            'product' => $product,
-        ], Response::HTTP_CREATED);
-    }
-
-    public function updateProduct(UpdateProductRequest $request, $id)
-    {
-        $product = Product::findOrFail($id);
-
-        $product->update($request->validated());
-
-        return response()->json([
-            'product' => $product,
-        ], Response::HTTP_OK);
-    }
-
-    public function deleteProduct($id)
-    {
-        $product = Product::findOrFail($id);
-        $product->delete();
-
-        return response()->noContent();
+        return response()->json($order);
     }
 }

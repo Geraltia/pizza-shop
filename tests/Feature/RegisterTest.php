@@ -24,20 +24,20 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+
         $response->assertJsonStructure([
-            'user' => [
+            'data' => [
                 'id',
                 'name',
                 'email',
-                'created_at',
-                'updated_at',
-            ]
+            ],
         ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
         ]);
     }
+
 
 
     /** @test */
