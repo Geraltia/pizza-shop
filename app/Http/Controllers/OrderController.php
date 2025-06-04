@@ -12,11 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class OrderController extends Controller
 {
-    protected $orderService;
 
-    public function __construct(OrderService $orderService)
+    public function __construct(protected OrderService $orderService)
     {
-        $this->orderService = $orderService;
     }
 
     public function store(StoreOrderRequest $request)
@@ -45,4 +43,17 @@ final class OrderController extends Controller
             ],
         ], Response::HTTP_OK);
     }
+
+    public function show($id, Request $request)
+    {
+        $user = $request->user();
+
+        $order = Order::with('orderItems.product')
+            ->where('user_id', $user->id)
+            ->findOrFail($id);
+
+        return response()->json($order, Response::HTTP_OK);
+    }
+
+
 }

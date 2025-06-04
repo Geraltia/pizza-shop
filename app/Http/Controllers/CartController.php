@@ -7,47 +7,80 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddToCartRequest;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\ProductType;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\CartService;
 
 final class CartController extends Controller
 {
+    public function __construct(protected CartService $cartService)
+    {
+    }
+
+
     public function addToCart(AddToCartRequest $request)
     {
+        $cartItem = $this->cartService->addToCart(
+            $request->product_id,
+            $request->quantity
+        );
+
+        return response()->json($cartItem, Response::HTTP_OK);
+    }
+
+
+    public function decreaseFromCart(Request $request)
+    {
         $user = Auth::user();
-        $product = Product::findOrFail($request->product_id);
-        $quantity = $request->quantity;
+        $productId = $request->product_id;
+        $quantity = $request->quantity ?? 1;
 
-        $cartItems = CartItem::where('user_id', $user->id)->get();
+        $cartItem = CartItem::where('user_id', $user->id)
+            ->where('product_id', $productId)
+            ->firstOrFail();
 
-        $pizzaCount = 0;
-        $drinkCount = 0;
+        $cartItem->quantity -= $quantity;
 
-        foreach ($cartItems as $item) {
-            if ($item->product->type === 'pizza') {
-                $pizzaCount += $item->quantity;
-            } elseif ($item->product->type === 'drink') {
-                $drinkCount += $item->quantity;
-            }
+        if ($cartItem->quantity <= 0) {
+            $cartItem->delete();
+            return response()->json(['message' => 'Товар удалён из корзины.']);
         }
 
-        if ($product->type === 'pizza' && $pizzaCount + $quantity > 10) {
-            throw new \LogicException('Можно добавить не более 10 пицц.');
-        }
-
-        if ($product->type === 'drink' && $drinkCount + $quantity > 20) {
-            throw new \LogicException('Можно добавить не более 20 напитков.');
-        }
-
-        $cartItem = CartItem::firstOrNew([
-            'user_id' => $user->id,
-            'product_id' => $product->id,
-        ]);
-
-        $cartItem->quantity += $quantity;
         $cartItem->save();
 
-        return response()->noContent(Response::HTTP_OK);
-
+        return response()->json($cartItem);
     }
+
+    public function removeFromCart(Request $request)
+    {
+        $user = Auth::user();
+        $productId = $request->product_id;
+
+        $cartItem = CartItem::where('user_id', $user->id)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->delete();
+        }
+
+        return response()->json(['message' => 'Товар удалён из корзины.']);
+    }
+
+    public function viewCart()
+    {
+        $user = Auth::user();
+
+        $cartItems = CartItem::with('product')
+            ->where('user_id', $user->id)
+            ->get();
+
+        return response()->json($cartItems);
+    }
+
+
+
+
 }

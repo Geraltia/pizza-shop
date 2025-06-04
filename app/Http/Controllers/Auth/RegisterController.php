@@ -9,6 +9,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Resources\UserResource;
 
 final class RegisterController extends Controller
 {
@@ -20,6 +21,6 @@ final class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['user' => $user], Response::HTTP_CREATED);
+        return (new UserResource($user))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 }

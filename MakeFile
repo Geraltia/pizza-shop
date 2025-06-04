@@ -4,39 +4,35 @@
 
 # Run feature & unit tests
 test:
-	php artisan test
+	docker compose exec php artisan test
 
 # Drop all tables, run migrations and seed database
 fresh-seed:
-	php artisan migrate:fresh --seed
+	docker compose exec php artisan migrate:fresh --seed
 
 # Run migrations
 migrate:
-	php artisan migrate
+	docker compose exec php artisan migrate
 
 # Run database seeders
 seed:
-	php artisan db:seed
+	docker compose exec php artisan db:seed
 
 # Start Laravel dev server
 serve:
-	php artisan serve
+	docker compose exec php artisan serve
 
 # Clear config, route, and view cache
 cache-clear:
-	php artisan config:clear
-	php artisan route:clear
-	php artisan view:clear
-	php artisan cache:clear
+	docker compose exec php artisan config:clear
+	docker compose exec php artisan route:clear
+	docker compose exec php artisan view:clear
+	docker compose exec php artisan cache:clear
 
 # Run tests inside Sail container (if using Sail)
 sail-test:
 	./vendor/bin/sail test
 
-# Run Pint for code style fixing (Laravel Pint)
-pint:
-	./vendor/bin/pint
-
 # Run IDE helper generation (if using barryvdh/laravel-ide-helper)
 ide-helper:
-	php artisan ide-helper:generate
+	docker compose exec php artisan ide-helper:generate

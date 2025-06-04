@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\ProductType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -38,5 +39,9 @@ final class Product extends Model
         'description',
         'price',
         'type',
+    ];
+
+    protected $casts = [
+        'type' => ProductType::class,
     ];
 }

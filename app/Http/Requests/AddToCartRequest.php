@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\ProductType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 final class AddToCartRequest extends FormRequest
 {
@@ -27,6 +29,7 @@ final class AddToCartRequest extends FormRequest
         return [
             'product_id' => ['required', 'exists:products,id'],
             'quantity' => ['required', 'integer', 'min:1'],
+            'type' => ['required', new Enum(ProductType::class)],
         ];
     }
 }

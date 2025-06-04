@@ -23,4 +23,5 @@ final class ProductObserver
     {
         Cache::forget('products_all');
     }
+
 }
